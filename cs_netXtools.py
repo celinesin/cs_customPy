@@ -84,10 +84,11 @@ def sig_diameter(fullgraph, nodeList, numBins=10, numSimulations=10000):
 def getDict_degree2nodeNames(myGraph, **keyword_parameters):
     deg2nodeNames = {}
     if ('nodeList' in keyword_parameters):
+        # remove entries from nodeList that are not in graph
+        nodeList = nx.subgraph(myGraph, nodeList).nodes())
         for currNode in keyword_parameters['nodeList']:
             #make dictionary where key is degree and value is the list of nodes
             currDeg = myGraph.degree(currNode)
-            if not currDeg: currDeg = 0
             popDoL(deg2nodeNames, currDeg, currNode)
     else:
         for currNode in myGraph.nodes():
@@ -100,7 +101,7 @@ def getDict_degree2nodeNames(myGraph, **keyword_parameters):
         degDist = deg2nodeNames
         numBins = keyword_parameters['numBins']
         # calculate desired bin width
-        binWidth = (math.log10(max(degDist.keys())+1) - math.log10(min(degDist.keys())+1)) / numBins
+        binWidth = (math.log10(max(degDist.keys())) - math.log10(min(degDist.keys()))) / numBins
 
         lb = 10 ** (binWidth * np.array(range(numBins)))
         ub = 10 ** (binWidth * (np.array(range(numBins))+1))
