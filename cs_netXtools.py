@@ -85,8 +85,8 @@ def getDict_degree2nodeNames(myGraph, **keyword_parameters):
     deg2nodeNames = {}
     if ('nodeList' in keyword_parameters):
         # remove entries from nodeList that are not in graph
-        nodeList = nx.subgraph(myGraph, nodeList).nodes())
-        for currNode in keyword_parameters['nodeList']:
+        nodeList = nx.subgraph(myGraph, keyword_parameters['nodeList']).nodes()
+        for currNode in nodeList:
             #make dictionary where key is degree and value is the list of nodes
             currDeg = myGraph.degree(currNode)
             popDoL(deg2nodeNames, currDeg, currNode)
