@@ -100,7 +100,7 @@ def getDict_degree2nodeNames(myGraph, **keyword_parameters):
         degDist = deg2nodeNames
         numBins = keyword_parameters['numBins']
         # calculate desired bin width
-        binWidth = (math.log10(max(degDist.keys())) - math.log10(min(degDist.keys()))) / numBins
+        binWidth = (math.log10(max(degDist.keys())+1) - math.log10(min(degDist.keys())+1)) / numBins
 
         lb = 10 ** (binWidth * np.array(range(numBins)))
         ub = 10 ** (binWidth * (np.array(range(numBins))+1))
