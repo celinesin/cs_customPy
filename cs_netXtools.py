@@ -55,7 +55,7 @@ def sig_lccOfSubgraph(fullgraph, nodeList, numBins=10, numSimulations=10000):
 
     return retStruct
 
-# Takes a networkX graph and subgraph and calculates the significance of the lcc in the subgraph
+# Takes a networkX graph and subgraph and calculates the significance of the diameter in the subgraph
 def sig_diameter(fullgraph, nodeList, numBins=10, numSimulations=10000):
     diameter_preserveDeg = []
     currSubgraph = fullgraph.subgraph(nodeList)
