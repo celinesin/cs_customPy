@@ -32,7 +32,7 @@ def subgraph_lcc(myGraph):
 
     return newGraph
 
-# Takes a networkX graph and subgraph and calculates the significance of the diameter in the subgraph
+# Takes a networkX graph and subgraph and calculates the significance of the lcc in the subgraph
 def sig_lccOfSubgraph(fullgraph, nodeList, numBins=10, numSimulations=10000):
     lccSizes_preserveDeg = []
     tempGraph = fullgraph.subgraph(nodeList)
@@ -253,5 +253,14 @@ def getPosfrJson(fileName):
     for eaNode in ogPos["elements"]["nodes"]:
         nodeName = str(eaNode["data"]["shared_name"])
         posTuple = (eaNode["position"]["x"], eaNode["position"]["y"])
+        posDict[nodeName] = posTuple
+    return posDict
+
+def getPosfrJson3D(fileName):
+    posDict = {}
+    ogPos = json.load(open(fileName))
+    for eaNode in ogPos["elements"]["nodes"]:
+        nodeName = str(eaNode["data"]["shared_name"])
+        posTuple = (eaNode["position"]["x"], eaNode["position"]["y"], eaNode["position"]["z"])
         posDict[nodeName] = posTuple
     return posDict
