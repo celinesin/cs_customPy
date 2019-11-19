@@ -211,6 +211,33 @@ def randSubgraph_preserveDegree(ogGraph, degDist, binFlag):
     newGraph = ogGraph.subgraph(degMatchedRandNodeNames)
     return newGraph
 
+# Takes networkX graph and returns backbone of the graph
+def graphBackbone(ogGraph, co_alpha, weightAttr):
+    G_backbone = ogGraph.copy()
+    # calculate sum of weights at every node
+    sumWeights_node = {}
+    for eaNode in G_backbone.nodes():
+        currSum = 0
+        for eaNeighbor in nx.neighbors(G_backbone, eaNode):
+            weight = G_backbone[eaNode][eaNeighbor][weightAttr]
+            currSum += weight
+        sumWeights_node[eaNode] = currSum
+    # check edges from both directions for sig fr uni, store new graph in G_result
+    G_result = nx.Graph()
+    for u,v in G_backbone.edges():
+        w = G_backbone[u][v][weightAttr]
+        pa = w/sumWeights_node[u]
+        ka = nx.degree(G_backbone, u)
+        alpha1 = pa + (1.-pa)**(ka-1)
+        pb = w/sumWeights_node[v]
+        kb = nx.degree(G_backbone, v)
+        alpha2 = pb + (1.-pb)**(kb-1)
+
+        if alpha1 < co_alpha or alpha2 < co_alpha:
+            G_result.add_edge(u, v, weight=w)
+    return G_result
+
+
 # Takes networkX graph + two node lists and returns the distances between all the points.
 def dist_btw2subgraphs(myGraph, nodes1, nodes2, moduleDef='allNodes', distDef='pairwise',returnType = 'average'):
     # if flag 'center' is indicated, the distances between the centers of the subgraphs will be calculated.  Definition of center requires that all the components in the subgraph are connected, hence call to subgraph_lcc.
