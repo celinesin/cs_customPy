@@ -280,8 +280,8 @@ def jaccardIndex(graph1, graph2):
     graph1.add_nodes_from(unionNodes - graph1.nodes())
     # add extra nodes to graph2
     graph2.add_nodes_from(unionNodes - graph2.nodes())
-    g1_adj = nx.to_pandas_adjacency(graph1).sort_index(axis=0).sort_index(axis=1)
-    g2_adj = nx.to_pandas_adjacency(graph2).sort_index(axis=0).sort_index(axis=1)
+    g1_adj = nx.to_pandas_adjacency(graph1, weight=None).sort_index(axis=0).sort_index(axis=1)
+    g2_adj = nx.to_pandas_adjacency(graph2, weight=None).sort_index(axis=0).sort_index(axis=1)
     sum_adj = (g1_adj + g2_adj).to_numpy()
     union = np.count_nonzero(sum_adj == 2)
     intersection = np.count_nonzero(sum_adj)
