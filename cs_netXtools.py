@@ -219,13 +219,13 @@ def graphBackbone(ogGraph, co_alpha, weightAttr):
     for eaNode in G_backbone.nodes():
         currSum = 0
         for eaNeighbor in nx.neighbors(G_backbone, eaNode):
-            weight = G_backbone[eaNode][eaNeighbor][weightAttr]
+            weight = abs(G_backbone[eaNode][eaNeighbor][weightAttr])
             currSum += weight
         sumWeights_node[eaNode] = currSum
     # check edges from both directions for sig fr uni, store new graph in G_result
     G_result = nx.Graph()
     for u,v in G_backbone.edges():
-        w = G_backbone[u][v][weightAttr]
+        w = abs(G_backbone[u][v][weightAttr])
         pa = w/sumWeights_node[u]
         ka = nx.degree(G_backbone, u)
         alpha1 = pa + (1.-pa)**(ka-1)
@@ -273,6 +273,20 @@ def dist_btw2subgraphs(myGraph, nodes1, nodes2, moduleDef='allNodes', distDef='p
     else:
         raise NameError('returnType must be average or all')
 
+# takes two networkx graphs and calculates jacard index between
+def jaccardIndex(graph1, graph2):
+    unionNodes = set(graph1.nodes()).union(set(graph2.nodes()))
+    # add extra nodes to graph1
+    graph1.add_nodes_from(unionNodes - graph1.nodes())
+    # add extra nodes to graph2
+    graph2.add_nodes_from(unionNodes - graph2.nodes())
+    g1_adj = nx.to_pandas_adjacency(graph1).sort_index(axis=0).sort_index(axis=1)
+    g2_adj = nx.to_pandas_adjacency(graph2).sort_index(axis=0).sort_index(axis=1)
+    sum_adj = (g1_adj + g0_adj).to_numpy()
+    union = np.count_nonzero(sum_adj == 2)
+    intersection = np.count_nonzero(sum_adj)
+    ji = union/intersection
+    return ji
 
 def getPosfrJson(fileName):
     posDict = {}
