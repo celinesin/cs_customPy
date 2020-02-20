@@ -288,6 +288,21 @@ def jaccardIndex(graph1, graph2):
     ji = union/intersection
     return ji
 
+# takes two networkx graphs and calculates overlap coefficient (Jorg Science 2015 figure 3
+def overlapCof_edges(graph1, graph2):
+    unionNodes = set(graph1.nodes()).union(set(graph2.nodes()))
+    # add extra nodes to graph1
+    graph1.add_nodes_from(unionNodes - graph1.nodes())
+    # add extra nodes to graph2
+    graph2.add_nodes_from(unionNodes - graph2.nodes())
+    g1_adj = nx.to_pandas_adjacency(graph1, weight=None).sort_index(axis=0).sort_index(axis=1)
+    g2_adj = nx.to_pandas_adjacency(graph2, weight=None).sort_index(axis=0).sort_index(axis=1)
+    sum_adj = (g1_adj + g2_adj).to_numpy()
+    union = np.count_nonzero(sum_adj == 2)
+    denominator = min(np.count_nonzero(g1_adj.to_numpy()), np.count_nonzero(g2_adj.to_numpy()))
+    oc = union/denominator
+    return oc
+
 def getPosfrJson(fileName):
     posDict = {}
     ogPos = json.load(open(fileName))
