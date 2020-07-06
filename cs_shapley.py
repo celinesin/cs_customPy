@@ -85,7 +85,7 @@ def shapley_values(G, k=None):
     """
     shapley_values = dict.fromkeys(G, 0.0)  # b[v]=0 for v in G
     nodes = G
-    
+
     for s in nodes:
         # single source shortest paths
         S, P, sigma, D = _single_source_shortest_path_basic(G, s)
@@ -98,39 +98,39 @@ def shapley_values(G, k=None):
 
 def _single_source_shortest_path_basic(G, s):
     S = []   # list of nodes, in order
-    P = {}   # dictionary of nodes to list of ?
+    P = {}   # dictionary of nodes to first neighbors of that node
     for v in G:
         P[v] = []
     sigma = dict.fromkeys(G, 0.0)    # dictionary of target nodes and # of shortest paths to target node from s
     D = {}   # dictionary of nodes to distances
-    
+
     sigma[s] = 1.0    # change the value of sigma of current node (s) to 1
     D[s] = 0          # let the current distance be 0
     Q = [s]           # Q is the list of origins (which we only allow 1)
-    
+
     while Q:   # use BFS to find shortest paths
         v = Q.pop(0)  # the current start node
         S.append(v)   # add the node that we have searched from
         Dv = D[v]     # the current distance of the current node (s)
         sigmav = sigma[v]   # the current sigma of the current node (s)
-        
+
         for w in G[v]:      # for every node in G connected to v
-            if w not in D:  # if w is not yet in D, add it to Q 
+            if w not in D:  # if w is not yet in D, add it to Q
                 Q.append(w)
                 D[w] = Dv + 1  # and the distance between v and w is at least 1 larger than what we had before
             if D[w] == Dv + 1:   # this is a shortest path, count paths
                 sigma[w] += sigmav
-                P[w].append(v)  # predecessors (where one must go to get to target?)
+                P[w].append(v)  # predecessors (i.e. first neighbors)
     return S, P, sigma, D
 
 def _accumulate_basic(shapleyness, S, P, sigma, D, s):
     delta = dict.fromkeys(S, 0)
-    while S:
-        w = S.pop()
-        coeff = (1.0 + delta[w]) / sigma[w]
-        for v in P[w]:
-            if D[v] != 0:
-                delta[v] += sigma[v] * coeff / D[v]
+    while S:            # increment through S (list of nodes)
+        w = S.pop()     # for each node w
+        coeff = (1 + delta[w]) / sigma[w]
+        for v in P[w]:      # for each first neighbor of w
+            #if D[v] != 0:   # if distance to s is nonzero (i.e. we are not at s)
+            delta[v] += sigma[v] * coeff / D[w]
         if w != s:
             shapleyness[w] += delta[w]
     return shapleyness
